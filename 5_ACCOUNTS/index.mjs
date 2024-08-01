@@ -7,8 +7,6 @@ const require = createRequire(import.meta.url);
 
 import inquirer from "inquirer"
 
-// Seu código aqui
-
 
 // modulos internos
 
@@ -17,31 +15,52 @@ const fs = require("fs")
 console.log("Iniciamos o Accounts")
 
 operation()
-
-function operation () {
-    inquirer.prompt([{ // da pra escolher opções com o prompt
+function operation() {
+    inquirer.prompt([{
         type: "list",
         name: "action",
-        message: "O que deseja fazer?",
+        message: "O que prefere fazer?",
         choices: [
             "Criar Conta", "Consultar Saldo", "Depositar", "Sacar", "Sair"
         ]
     }]).then((answer) => {
-        const action = answer["action"]
+        const action = answer("action")
+        console.log(answer)
 
-        console.log(action)
-        if(action == "Criar Conta") {
-            createAccount()
+        if (action == "action") {
+            createAccout()
         }
-    }
-
-    )
-    .catch((err) => console.log(err))
+    })
 }
 
-// criando uma conta
+function createAccout() {
+    console.log(chalk.bgGreen("Obrigado por escolher nosso banco!"))
+    console.log(chalk.green("Criação de conta"))
+    buildAccount()
+}
 
-function createAccount() {
-    console.log(chalk.bgGreen.black("Obrigado por escolher o nosso banco!"))
-    console.log(chalk.green("Defina as opções da sua conta a seguir."))
+function buildAccount() {
+    inquirer.prompt([{
+        name: "accountName",
+        message: "Digite um nome para sua nova conta:"
+    }]).then((answer) => {
+        const accountName = answer("accountName")
+        console.log(accountName)
+
+        if (!fs.existsSync(`accounts${accounts}.json`)) {
+            fs.mkdir("accounts")
+        }
+        if (fs.existsSync(`accounts${accounts}.json`)) {
+            console.log(chalk.bgRed.black("Já existe uma conta com esse nome!"))
+            buildAccount()
+        }
+
+        fs.writeFileSync(`accounts${accounts}.json`, `{balance: 0}`, function (err) {
+            console.log(err)
+        })
+
+        console.log(chalk.green("Parabéns! Sua conta foi criada!"))
+        operation()
+
+    }).catch((err) => console.log(err))
 }
