@@ -24,19 +24,21 @@ function operation() {
             "Criar Conta", "Consultar Saldo", "Depositar", "Sacar", "Sair"
         ]
     }]).then((answer) => {
-        const action = answer("action")
+        const action = answer["action"]
+
         console.log(answer)
 
-        if (action == "action") {
+        if (action === "Criar Conta") {
             createAccout()
         }
     })
 }
 
+// Criando uma conta
 function createAccout() {
     console.log(chalk.bgGreen("Obrigado por escolher nosso banco!"))
-    console.log(chalk.green("Criação de conta"))
-    buildAccount()
+    console.log(chalk.green("Defina as opções da sua conta a seguir."))
+    buildAccount();
 }
 
 function buildAccount() {
@@ -44,22 +46,25 @@ function buildAccount() {
         name: "accountName",
         message: "Digite um nome para sua nova conta:"
     }]).then((answer) => {
-        const accountName = answer("accountName")
-        console.log(accountName)
+        const accountName = answer["accountName"]
+        console.info(accountName)
 
-        if (!fs.existsSync(`accounts${accounts}.json`)) {
-            fs.mkdir("accounts")
+        if(!fs.existsSync("accounts")) {
+            fs.mkdirSync("accounts");
         }
-        if (fs.existsSync(`accounts${accounts}.json`)) {
-            console.log(chalk.bgRed.black("Já existe uma conta com esse nome!"))
+
+        if(fs.existsSync(`accounts/${accountName}.json`)) {
+            console.log(chalk.bgRed.black("Essa conta já existe! Escolha outro nome!"))
             buildAccount()
+            return
         }
 
-        fs.writeFileSync(`accounts${accounts}.json`, `{balance: 0}`, function (err) {
-            console.log(err)
+        fs.writeFileSync(`accounts/${accountName}.json`, "{'balance': 0}",
+            function (err) {
+                console.log(err)
         })
 
-        console.log(chalk.green("Parabéns! Sua conta foi criada!"))
+        console.log(chalk.green("Parabéns, sua conta foi crianda!"))
         operation()
 
     }).catch((err) => console.log(err))
